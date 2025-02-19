@@ -6,9 +6,9 @@ spring:
         name: QuartzTaskManualAdder
 
     datasource:
-        url: jdbc:postgresql://172.25.25.97:5432/court
-        username: court
-        password: court
+        url: jdbc:postgresql://localhost:5432/flux
+        username: flux
+        password: flux
         driver-class-name: org.postgresql.Driver
     jpa:
         hibernate:
