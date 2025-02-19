@@ -1,0 +1,55 @@
+server:
+    port: 8700
+
+spring:
+    application:
+        name: QuartzTaskManualAdder
+
+    datasource:
+        url: jdbc:postgresql://172.25.25.97:5432/court
+        username: court
+        password: court
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        hibernate:
+            ddl-auto: none
+        show-sql: true
+        properties:
+            hibernate:
+                format_sql: true
+    liquibase:
+        enabled: true
+        change-log: db.changelog/db.changelog-master.yaml
+        default-schema: public
+
+    quartz:
+        job-store-type: jdbc
+        jdbc:
+            initialize-schema: never
+        overwrite-existing-jobs: true
+        properties:
+            org:
+                quartz:
+                    dataSource:
+                        quartzDataSource:
+                            URL: ${spring.datasource.url}
+                            user: ${spring.datasource.username}
+                            password: ${spring.datasource.password}
+                            driver: ${spring.datasource.driver-class-name}
+                            provider: hikaricp
+                            maxConnections: 3
+                    scheduler:
+                        instanceId: AUTO #Используев AUTO, для того, чтобы каждый новый инстанс Scheduler`a имел уникальное название.
+                    jobStore:
+                        class: org.quartz.impl.jdbcjobstore.JobStoreTX
+                        dataSource: quartzDataSource
+                        driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate #Указываем диалект для запросов к БД
+                        useProperties: false #Указываем, что все данные в БД будут храниться в качестве строк, а не в двоичном формате
+                        tablePrefix: QRTZ_  #Префикс таблиц в БД
+                        clusterCheckinInterval: 5000 #Указываем частоту сверки инстанса Scheduler с остальными инстансами в кластере
+                        isClustered: true #Включаем режим работы в кластере
+                    threadPool: #Указываем настройки для создания пула поток, на котором будут выполняться джобы
+                        class: org.quartz.simpl.SimpleThreadPool
+                        threadCount: 10
+                        threadsInheritContextClassLoaderOfInitializingThread: true
+            auto-startup: false #Выключаем автоматический старт для scheduler, т.к. запуск будет выполнен вручную
