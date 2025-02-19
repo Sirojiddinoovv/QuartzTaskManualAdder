@@ -1,0 +1,5 @@
+databaseChangeLog:
+
+  - include:
+      file: /DDL/court-table.yml
+      relativeToChangelogFile: true
